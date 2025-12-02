@@ -1,0 +1,1524 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOX TV - Plateforme de Chaînes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #c86509;
+            --secondary-color: #1a1a2e;
+            --dark-bg: #1a1a2e;
+            --light-text: #fefcfc;
+            --header-height: 60px;
+            --button-radius: 20px;
+            --success-color: #0af62e;
+            --warning-color: #ff9500;
+            --premium-gold: #ffd700;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: linear-gradient(to right, var(--dark-bg), #1a1a2e);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: var(--light-text);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Publicité */
+        #advertisement {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+        }
+
+        .ad-content {
+            position: relative;
+            max-width: 90%;
+            max-height: 90%;
+            text-align: center;
+        }
+
+        .ad-content img {
+            max-width: 100%;
+            max-height: 80vh;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .close-ad {
+            position: absolute;
+            top: -15px;
+            right: -15px;
+            background-color: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .ad-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            border: none;
+            border-radius: var(--button-radius);
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .ad-button:hover {
+            transform: scale(1.05);
+        }
+
+        /* Modals améliorées */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.9);
+            z-index: 10001;
+            justify-content: center;
+            align-items: center;
+            animation: modalFadeIn 0.3s ease-out;
+        }
+
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: scale(0.8); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-content {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            padding: 40px 30px;
+            border-radius: 25px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            border: 3px solid var(--premium-gold);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(to right, var(--primary-color), var(--premium-gold), var(--secondary-color));
+        }
+
+        .modal-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .premium-icon {
+            color: var(--premium-gold);
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+            animation: premiumPulse 2s infinite;
+        }
+
+        @keyframes premiumPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .subscription-icon {
+            color: var(--success-color);
+            text-shadow: 0 0 20px rgba(10, 246, 46, 0.5);
+        }
+
+        .modal h2 {
+            color: var(--premium-gold);
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal p {
+            margin-bottom: 30px;
+            line-height: 1.7;
+            font-size: 16px;
+            color: #e0e0e0;
+        }
+
+        .features-list {
+            text-align: left;
+            margin: 25px 0;
+            padding: 0 20px;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #e0e0e0;
+        }
+
+        .feature-item i {
+            color: var(--success-color);
+            margin-right: 10px;
+            font-size: 16px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 25px;
+        }
+
+        .modal-btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: var(--button-radius);
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .modal-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .modal-btn:hover::before {
+            left: 100%;
+        }
+
+        .modal-btn.primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--warning-color));
+            color: white;
+            box-shadow: 0 5px 15px rgba(200, 101, 9, 0.4);
+        }
+
+        .modal-btn.secondary {
+            background: linear-gradient(135deg, var(--success-color), #08d427);
+            color: white;
+            box-shadow: 0 5px 15px rgba(10, 246, 46, 0.4);
+        }
+
+        .modal-btn.tertiary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .modal-btn.outline {
+            background: transparent;
+            border: 2px solid var(--premium-gold);
+            color: var(--premium-gold);
+        }
+
+        .modal-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-btn:active {
+            transform: translateY(-1px);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .close-modal:hover {
+            background: rgba(255, 0, 0, 0.3);
+            transform: rotate(90deg);
+        }
+
+        /* Badge premium flottant */
+        .premium-badge {
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            background: linear-gradient(135deg, var(--premium-gold), #ff9500);
+            color: #000;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            transform: rotate(5deg);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        /* Section avantages */
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 25px 0;
+        }
+
+        .advantage-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .advantage-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .advantage-card i {
+            font-size: 2rem;
+            color: var(--premium-gold);
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .advantage-card span {
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Carrousel publicitaire */
+        .ad-carousel {
+            width: 95%;
+            max-width: 1200px;
+            height: 150px;
+            margin: 20px auto;
+            position: relative;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .carousel-container {
+            display: flex;
+            transition: transform 0.5s ease;
+            height: 100%;
+        }
+
+        .carousel-slide {
+            min-width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .carousel-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .carousel-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px;
+            text-align: center;
+        }
+
+        .carousel-nav {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+        }
+
+        .carousel-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .carousel-dot.active {
+            background: var(--primary-color);
+        }
+
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            font-size: 18px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: background 0.3s;
+        }
+
+        .carousel-btn:hover {
+            background: rgba(0, 0, 0, 0.8);
+        }
+
+        .carousel-btn.prev {
+            left: 10px;
+        }
+
+        .carousel-btn.next {
+            right: 10px;
+        }
+
+        /* Animation de chargement */
+        #loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #0a0a0f;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+
+        .stream-container {
+            position: relative;
+            width: 300px;
+            height: 200px;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(10, 246, 46, 0.3);
+        }
+
+        .stream-particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+        }
+
+        .particle {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background-color: #0af62e;
+            border-radius: 50%;
+            opacity: 0.7;
+            animation: float 5s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); opacity: 0.2; }
+            25% { transform: translateY(-20px) translateX(10px); opacity: 0.5; }
+            50% { transform: translateY(0) translateX(20px); opacity: 0.7; }
+            75% { transform: translateY(20px) translateX(10px); opacity: 0.5; }
+        }
+
+        .stream-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #ec7506;
+            font-size: 32px;
+            font-weight: bold;
+            text-shadow: 0 0 15px rgba(10, 246, 46, 0.7);
+            z-index: 2;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+
+        .progress-container {
+            position: absolute;
+            bottom: 30px;
+            width: 80%;
+            left: 10%;
+            height: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            animation: progress 2s ease-in-out forwards;
+        }
+
+        @keyframes progress {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        .loading-text {
+            margin-top: 30px;
+            color: #0af62e;
+            font-size: 18px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            position: relative;
+        }
+
+        .loading-text::after {
+            content: "...";
+            position: absolute;
+            animation: dots 1.5s infinite steps(3);
+        }
+
+        @keyframes dots {
+            0%, 20% { content: "."; }
+            40% { content: ".."; }
+            60%, 100% { content: "..."; }
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.95); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
+            100% { opacity: 0.7; transform: translate(-50%, -50%) scale(0.95); }
+        }
+
+        /* Style pour le badge FREE */
+        .free-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: var(--success-color);
+            color: #000;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 10px;
+            z-index: 1;
+        }
+
+        /* Style pour le badge ABONNEMENT */
+        .sub-badge {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: linear-gradient(135deg, var(--premium-gold), #ff9500);
+            color: #000;
+            font-size: 10px;
+            font-weight: bold;
+            padding: 2px 5px;
+            border-radius: 10px;
+            z-index: 1;
+        }
+
+        /* Grid et disposition */
+        .grid-container {
+            display: grid;
+            justify-content: center;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 10px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid1-container {
+            display: grid;
+            background-color: #1a1a2e;
+            justify-content: center;
+            grid-template-columns: 1fr;
+            gap: 5px;
+            color: white;
+            padding: 0;
+        }
+
+        h1 {
+            text-align: center;
+            margin: 20px 0;
+            font-weight: bold;
+            font-size: 2rem;
+        }
+
+        h2 {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 14px;
+            color: var(--light-text);
+            font-family: "Arial", sans-serif;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100px;
+        }
+
+        .channel-button {
+            position: relative;
+            border-radius: var(--button-radius);
+            background-image: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            border: 2px solid #fefbfb;
+            padding: 5px;
+            margin: 5px;
+            height: 120px;
+            width: 100px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .channel-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .channel-button:active {
+            border: 2px solid rgb(241, 5, 5);
+            transform: scale(0.98);
+        }
+
+        .channel-button img {
+            border-radius: 8px;
+            height: 70px;
+            width: 90px;
+            object-fit: cover;
+        }
+
+        .button-container {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        /* Header */
+        header {
+            border-radius: var(--button-radius);
+            background-image: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            padding: 5px 15px;
+            margin: 10px auto;
+            height: var(--header-height);
+            width: 95%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+        }
+
+        .logo img {
+            height: 40px;
+            width: auto;
+            transition: transform 0.3s;
+        }
+
+        .logo img:hover {
+            transform: scale(1.1);
+        }
+
+        .header-center {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 20px;
+        }
+
+        .header-center input {
+            width: 70%;
+            max-width: 500px;
+            padding: 10px 15px;
+            border: 2px solid #0af62e;
+            border-radius: 20px 0 0 20px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .header-center button {
+            padding: 10px 15px;
+            border: 2px solid #0af62e;
+            border-left: none;
+            border-radius: 0 20px 20px 0;
+            background-color: #0af62e;
+            cursor: pointer;
+            height: auto;
+            transition: background-color 0.3s;
+        }
+
+        .header-center button:hover {
+            background-color: #08d427;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-right i, .header-right button {
+            font-size: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            color: white;
+            transition: transform 0.3s;
+        }
+
+        .header-right i:hover, .header-right button:hover {
+            transform: scale(1.1);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .grid-container {
+                grid-template-columns: repeat(5, 1fr);
+            }
+            
+            .ad-carousel {
+                height: 120px;
+            }
+            
+            header {
+                flex-direction: column;
+                height: auto;
+                padding: 10px;
+                gap: 10px;
+            }
+            
+            .header-center {
+                width: 100%;
+                margin: 10px 0;
+            }
+            
+            .header-center input {
+                width: 80%;
+            }
+
+            .modal-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .modal-btn {
+                width: 100%;
+                max-width: 250px;
+            }
+
+            .advantages-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .grid-container {
+                 grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .ad-carousel {
+                height: 100px;
+            }
+            
+            .channel-button {
+                width: 100%;
+                max-width: 150px;
+                margin: 5px auto;
+            }
+
+            .modal-icon {
+                font-size: 3rem;
+            }
+
+            .modal h2 {
+                font-size: 24px;
+            }
+        }
+
+        .ad-button {
+            position: relative;
+            border-radius: var(--button-radius);
+            background-image: blue;
+            border: 2px solid #ffffff;
+            padding: 10px;
+            margin: 10px;
+            height: 50px;
+            width: 200px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: center;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Publicité -->
+    <div id="advertisement">
+        <div class="ad-content">
+            <button class="close-ad" onclick="closeAd()"><i class="fas fa-times"></i></button>
+            <img src="https://i.ibb.co/sJpqpC5C/Add-Text-11-28-03-26-38.jpg" alt="Publicité">
+            <button class="ad-button" onclick="visitSponsor()">JE M'ABONNE</button>
+        </div>
+    </div>
+
+    <!-- Modal pour les chaînes premium -->
+    <div id="premiumModal" class="modal">
+        <div class="modal-content">
+            <div class="premium-badge">
+                <i class="fas fa-crown"></i> PREMIUM
+            </div>
+            <button class="close-modal" onclick="closePremiumModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <i class="fas fa-crown modal-icon premium-icon"></i>
+            
+            <p>Accédez à <strong>1500+ chaînes exclusives</strong> et suivez la TELE sans limite où que vous soyez !</p>
+            
+            <div class="advantages-grid">
+                <div class="advantage-card">
+                    <i class="fas fa-tv"></i>
+                    <span>Toutes les Chaînes</span>
+                </div>
+               
+            </div>
+
+
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="showSubscriptionModal()">
+                    <i class="fas fa-rocket"></i>
+                    S'ABONNER MAINTENANT
+                </button>
+                <button class="modal-btn outline" onclick="closePremiumModal()">
+                    <i class="fas fa-clock"></i>
+                    ESSAYER PLUS TARD
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal pour les options d'abonnement -->
+    <div id="subscriptionModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closeSubscriptionModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <i class="fas fa-gem modal-icon subscription-icon"></i>
+            
+            <p>Sélectionnez la méthode qui vous convient le mieux pour payer.</p>
+
+
+            <div class="modal-buttons">
+<button class="modal-btn secondary" onclick="contactWhatsApp()">
+                    <i class="fab fa-whatsapp"></i>
+                    <div>
+                        <div>WhatsApp</div>
+                        <small>Support personnalisé</small>
+                    </div>
+                </button>
+                <button class="modal-btn primary" onclick="payOnline()">
+                    <i class="fas fa-credit-card"></i>
+                    <div>
+                        <div>Payer en Ligne</div>
+                        <small>Accès instantané</small>
+                    </div>
+                </button>
+                
+            </div>
+
+            <div style="margin-top: 20px; padding: 15px; background: rgba(255,215,0,0.1); border-radius: 10px; border-left: 4px solid var(--premium-gold);">
+                <i class="fas fa-star" style="color: var(--premium-gold); margin-right: 10px;"></i>
+                <span style="font-size: 14px; color: #e0e0e0;">
+                    <strong>Offre spéciale :</strong> Premier mois à -50% pour les nouveaux abonnés VIP !
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal d'information de paiement -->
+    <div id="paymentInfoModal" class="modal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="closePaymentInfoModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            
+            <i class="fas fa-info-circle modal-icon" style="color: #667eea;"></i>
+            <h2>📊 Nos Offres d'Abonnement</h2>
+            
+            <div style="display: grid; gap: 15px; margin: 25px 0;">
+                <div style="background: rgba(255,215,0,0.1); padding: 20px; border-radius: 15px; border: 2px solid var(--premium-gold);">
+                    <h3 style="color: var(--premium-gold); margin-bottom: 10px;">
+                        <i class="fas fa-crown"></i> Premium Mensuel
+                    </h3>
+                    <div style="font-size: 24px; font-weight: bold; color: white;">2,000 FCFA/mois</div>
+                    <div style="font-size: 12px; color: #e0e0e0; margin-top: 5px;">Soit 75 FCFA par jour</div>
+                </div>
+                
+                <div style="background: rgba(10,246,46,0.1); padding: 20px; border-radius: 15px; border: 2px solid var(--success-color);">
+                    <h3 style="color: var(--success-color); margin-bottom: 10px;">
+                        <i class="fas fa-calendar-alt"></i> Premium Trimestriel
+                    </h3>
+                    <div style="font-size: 24px; font-weight: bold; color: white;">40,000 FCFA/3 mois</div>
+                    <div style="font-size: 12px; color: #e0e0e0; margin-top: 5px;">Économisez 5,000 FCFA</div>
+                </div>
+                
+                <div style="background: rgba(102,126,234,0.1); padding: 20px; border-radius: 15px; border: 2px solid #667eea;">
+                    <h3 style="color: #667eea; margin-bottom: 10px;">
+                        <i class="fas fa-calendar-star"></i> Premium Annuel
+                    </h3>
+                    <div style="font-size: 24px; font-weight: bold; color: white;">120,000 FCFA/an</div>
+                    <div style="font-size: 12px; color: #e0e0e0; margin-top: 5px;">Économisez 60,000 FCFA</div>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="modal-btn primary" onclick="closePaymentInfoModal(); showSubscriptionModal();">
+                    <i class="fas fa-check"></i>
+                    CHOISIR MON OFFRE
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Animation de chargement -->
+    <div id="loader">
+        <div class="stream-container">
+            <div class="stream-particles" id="particles"></div>
+            <div class="stream-logo">AFRICA BOX</div>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+        <div class="loading-text">Chargement en cours</div>
+    </div>
+    
+    <!-- Carrousel publicitaire -->
+    <div class="ad-carousel">
+        <div class="carousel-container" id="carousel-container">
+            <div class="carousel-slide">
+                <img src="https://i.ibb.co/nqf0Hmrh/Add-Text-11-28-11-39-24.png" alt="BOUQUET">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://www2.0zz0.com/2025/08/26/15/891881581.jpg" alt="Publicité 2">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://i.ibb.co/SXYXctZ5/Add-Text-11-28-01-05-26.png" alt="Publicité 3">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://i.ibb.co/V0tMG1hR/Add-Text-11-28-12-46-34.png" alt="CDM">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://i.ibb.co/nqf0Hmrh/Add-Text-11-28-11-39-24.png" alt="bouuquet">
+            </div>
+            <div class="carousel-slide">
+                <img src="https://i.ibb.co/SXYXctZ5/Add-Text-11-28-01-05-26.png" alt="bouuquet">
+            </div>
+        </div>
+        <div class="carousel-nav" id="carousel-nav"></div>
+    </div>
+    
+    <main>
+        <div class="grid1-container">
+            <div class="button-container">
+                <div id="buttons-list" class="grid-container">
+                    <!-- Les chaînes seront chargées dynamiquement -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Fonction pour fermer la publicité
+        function closeAd() {
+            document.getElementById('advertisement').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('advertisement').style.display = 'none';
+            }, 500);
+        }
+
+        // Fonction pour visiter le site du sponsor
+        function visitSponsor() {
+            window.open('https://wa.me/22670959953?text=Bonjour%2C%20je%20souhaite%20m%E2%80%99abonner%20%C3%A0%20l%E2%80%99application%20Africa%20Box%20et%20avoir%20plus%20d%E2%80%99informations%20sur%20les%20offres', '_blank');
+            closeAd();
+        }
+
+        // Afficher la pub après le chargement
+        function showAd() {
+            setTimeout(() => {
+                document.getElementById('advertisement').style.display = 'flex';
+            }, 1000);
+        }
+
+        // Gestion des modals
+        function showPremiumModal() {
+            document.getElementById('premiumModal').style.display = 'flex';
+        }
+
+        function closePremiumModal() {
+            document.getElementById('premiumModal').style.display = 'none';
+        }
+
+        function showSubscriptionModal() {
+            closePremiumModal();
+            document.getElementById('subscriptionModal').style.display = 'flex';
+        }
+
+        function closeSubscriptionModal() {
+            document.getElementById('subscriptionModal').style.display = 'none';
+        }
+
+        function showPaymentInfo() {
+            closeSubscriptionModal();
+            document.getElementById('paymentInfoModal').style.display = 'flex';
+        }
+
+        function closePaymentInfoModal() {
+            document.getElementById('paymentInfoModal').style.display = 'none';
+        }
+
+        function payOnline() {
+            window.open('/tarifs.html', '_blank');
+            closeSubscriptionModal();
+        }
+
+        function contactWhatsApp() {
+            const message = "Bonjour, je souhaite m'abonner à l'application Africa Box et avoir plus d'informations sur les offres disponibles.";
+            const phoneNumber = "22670959953";
+            window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
+            closeSubscriptionModal();
+        }
+
+        // Fermer les modals en cliquant à l'extérieur
+        window.addEventListener('click', function(event) {
+            const modals = ['premiumModal', 'subscriptionModal', 'paymentInfoModal'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (event.target === modal) {
+                    if (modalId === 'premiumModal') closePremiumModal();
+                    if (modalId === 'subscriptionModal') closeSubscriptionModal();
+                    if (modalId === 'paymentInfoModal') closePaymentInfoModal();
+                }
+            });
+        });
+
+        // Création des particules animées
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const particleCount = 50;
+            
+            for (let i = 0; i < particleCount; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('particle');
+                
+                particle.style.left = `${Math.random() * 100}%`;
+                particle.style.top = `${Math.random() * 100}%`;
+                particle.style.animationDuration = `${3 + Math.random() * 4}s`;
+                particle.style.animationDelay = `${Math.random() * 2}s`;
+                
+                const size = 1 + Math.random() * 3;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.opacity = 0.3 + Math.random() * 0.7;
+                
+                container.appendChild(particle);
+            }
+        }
+
+        // Initialisation du carrousel
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.carousel-slide');
+        const navContainer = document.getElementById('carousel-nav');
+        
+        // Créer les indicateurs de navigation
+        slides.forEach((_, i) => {
+            const dot = document.createElement('div');
+            dot.classList.add('carousel-dot');
+            if (i === 0) dot.classList.add('active');
+            dot.addEventListener('click', () => {
+                goToSlide(i);
+            });
+            navContainer.appendChild(dot);
+        });
+        
+        function goToSlide(n) {
+            currentSlide = n;
+            updateCarousel();
+        }
+        
+        function moveSlide(direction) {
+            currentSlide += direction;
+            
+            if (currentSlide < 0) {
+                currentSlide = slides.length - 1;
+            } else if (currentSlide >= slides.length) {
+                currentSlide = 0;
+            }
+            
+            updateCarousel();
+        }
+        
+        function updateCarousel() {
+            const container = document.getElementById('carousel-container');
+            container.style.transform = `translateX(-${currentSlide * 100}%)`;
+            
+            document.querySelectorAll('.carousel-dot').forEach((dot, i) => {
+                if (i === currentSlide) {
+                    dot.classList.add('active');
+                } else {
+                    dot.classList.remove('active');
+                }
+            });
+        }
+        
+        // Défilement automatique du carrousel
+        setInterval(() => {
+            moveSlide(1);
+        }, 5000);
+
+        // Stockage des chaînes (version nettoyée)
+        const channels = [
+            { "name": "RTB", "img": "https://www7.0zz0.com/2024/08/02/11/333373841.png", "type": "free", "handler": "rtb" },
+            { "name": "RTS 1", "img": "https://www12.0zz0.com/2024/08/05/15/299958314.png", "type": "free", "handler": "rts1" },
+            { "name": "RTN", "img": "https://www3.0zz0.com/2024/08/03/23/992357632.png", "type": "free", "handler": "rtn" },
+            { "name": "ORTM 1", "img": "https://www8.0zz0.com/2024/08/02/11/529794985.png", "type": "free", "handler": "ortm1" },
+            { "name": "INFOSPORT+", "img": "https://www9.0zz0.com/2024/08/02/19/664236517.png", "type": "free", "handler": "infosport" },
+            { "name": "CANAL+ SPORT", "img": "https://www11.0zz0.com/2024/08/02/19/428153634.png", "type": "free", "handler": "cplussport" },
+            { "name": "AFRO MAGIC", "img": "https://www2.0zz0.com/2025/08/05/14/374274234.png", "type": "subscription" },
+            { "name": "TF1", "img": "https://www4.0zz0.com/2024/08/02/19/658699334.png", "type": "free", "handler": "tf1" },
+            { "name": "TF1 SERIES", "img": "https://www4.0zz0.com/2024/08/02/19/249284201.png", "type": "subscription" },
+            { "name": "SYFY", "img": "https://www4.0zz0.com/2024/08/03/21/782764156.png", "type": "subscription" },
+            { "name": "ORTM 2", "img": "https://www12.0zz0.com/2024/08/02/11/394695009.png", "type": "free", "handler": "ortm2" },
+            { "name": "TVT", "img": "https://www12.0zz0.com/2024/08/03/23/511263635.png", "type": "free", "handler": "aplus" },
+            { "name": "A+", "img": "https://www7.0zz0.com/2024/08/02/19/342432574.png", "type": "subscription" },
+            { "name": "A+ IVOIRE", "img": "https://www3.0zz0.com/2024/08/02/17/771903257.png", "type": "subscription" },
+            { "name": "RTI 1", "img": "https://www10.0zz0.com/2024/08/02/11/153609319.png", "type": "subscription" },
+            { "name": "RTI 2", "img": "https://www10.0zz0.com/2024/08/02/17/880415484.png", "type": "subscription" },
+            { "name": "LA 3", "img": "https://www8.0zz0.com/2024/08/02/17/848624392.png", "type": "subscription" },
+            { "name": "NOVELAS", "img": "https://www8.0zz0.com/2024/08/02/14/226434745.png", "type": "subscription" },
+            { "name": "NOLLYWOOD", "img": "https://www8.0zz0.com/2024/08/02/14/339086449.png", "type": "subscription" },
+            { "name": "NOLLY EPIC", "img": "https://www12.0zz0.com/2024/08/02/14/674631264.png", "type": "subscription" },
+            { "name": "CANAL+ SPORT1", "img": "https://www4.0zz0.com/2024/08/02/19/662902862.png", "type": "subscription" },
+            { "name": "CANAL+ SPORT2", "img": "https://www9.0zz0.com/2024/08/02/19/448373422.png", "type": "subscription" },
+            { "name": "CANAL+ SPORT 3", "img": "https://www12.0zz0.com/2024/08/02/19/710696525.png", "type": "subscription" },
+            { "name": "CANAL+ SPORT 4", "img": "https://www9.0zz0.com/2024/08/02/19/765468348.png", "type": "subscription" },
+            { "name": "CANAL+ SPORT 5", "img": "https://www4.0zz0.com/2024/08/02/19/962099565.png", "type": "free", "handler": "canalsp5" },
+            { "name": "SS GRANSTAND", "img": "https://www2.0zz0.com/2025/08/15/13/680193869.png", "type": "free", "handler": "ssgs" },
+            { "name": "SUPERSPORT 1", "img": "https://www2.0zz0.com/2025/08/15/13/276074156.png", "type": "subscription" },
+            { "name": "SUPERSPORT 2", "img": "https://www2.0zz0.com/2025/08/15/13/276074156.png", "type": "subscription" },
+            { "name": "SUPERSPORT 3", "img": "https://www2.0zz0.com/2025/08/15/13/276074156.png", "type": "subscription" },
+            { "name": "SUPERSPORT 4", "img": "https://www2.0zz0.com/2025/08/15/13/276074156.png", "type": "subscription" },
+            { "name": "SS LALIGA", "img": "https://www2.0zz0.com/2025/08/15/13/403836477.png", "type": "subscription" },
+            { "name": "NW SPORT 1", "img": "https://www2.0zz0.com/2025/08/06/11/222909793.png", "type": "subscription" },
+            { "name": "NW SPORT 2", "img": "https://www2.0zz0.com/2025/08/06/11/410128659.png", "type": "subscription" },
+            { "name": "NW SPORT 3", "img": "https://www2.0zz0.com/2025/08/06/11/918970715.png", "type": "subscription" },
+            { "name": "NW SPORT 4", "img": "https://www2.0zz0.com/2025/08/06/11/735968347.png", "type": "subscription" },
+            { "name": "NW SPORT 5", "img": "https://www2.0zz0.com/2025/08/06/11/499356631.png", "type": "subscription" },
+            { "name": "NW SPORT 6", "img": "https://www2.0zz0.com/2025/08/06/11/299922740.png", "type": "subscription" },
+            { "name": "NW SPORT 7", "img": "https://www2.0zz0.com/2025/08/06/11/226334933.png", "type": "subscription" },
+            { "name": "EUROSPORT 1", "img": "https://www4.0zz0.com/2024/08/02/19/970018965.png", "type": "free", "handler": "euro1" },
+            { "name": "EUROSPORT 2", "img": "https://www4.0zz0.com/2024/08/02/19/632959211.png", "type": "subscription" },
+            { "name": "beIN SPORT 1", "img": "https://www8.0zz0.com/2024/08/02/20/534618143.png", "type": "subscription" },
+            { "name": "beIN SPORTS 2", "img": "https://www4.0zz0.com/2024/08/02/19/584244375.png", "type": "subscription" },
+            { "name": "beIN SPORT 3", "img": "https://www12.0zz0.com/2024/08/02/20/191541997.png", "type": "free", "handler": "bein3" },
+            { "name": "beIN MAX 4", "img": "https://www7.0zz0.com/2024/08/04/16/470754045.png", "type": "subscription" },
+            { "name": "beIN MAX 5", "img": "https://www10.0zz0.com/2024/08/04/16/203037067.png", "type": "subscription" },
+            { "name": "beIN MAX 6", "img": "https://www5.0zz0.com/2024/08/04/16/923922490.png", "type": "subscription" },
+            { "name": "beIN MAX 7", "img": "https://www7.0zz0.com/2024/08/04/16/761214351.png", "type": "subscription" },
+            { "name": "beIN MAX 8", "img": "https://www10.0zz0.com/2024/08/04/16/490652275.png", "type": "subscription" },
+            { "name": "beIN MAX 9", "img": "https://www10.0zz0.com/2024/08/04/16/484553568.png", "type": "subscription" },
+            { "name": "beIN MAX 10", "img": "https://www11.0zz0.com/2024/08/04/16/564145867.png", "type": "subscription" },
+            { "name": "DAZN", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "free", "handler": "dazn" },
+            { "name": "BF INFO", "img": "https://www12.0zz0.com/2024/08/02/17/918060545.png", "type": "subscription" },
+            { "name": "NW CINEMA", "img": "https://www2.0zz0.com/2025/08/06/11/466225499.png", "type": "subscription" },
+            { "name": "NW SERIES", "img": "https://www2.0zz0.com/2025/08/06/11/367401199.png", "type": "subscription" },
+            { "name": "NW TRANSNAT1", "img": "https://www2.0zz0.com/2025/08/06/11/438757646.png", "type": "subscription" },
+            { "name": "NW MIX", "img": "https://www2.0zz0.com/2025/08/06/11/790845930.png", "type": "subscription" },
+            { "name": "NW MUSIK", "img": "https://www2.0zz0.com/2025/08/06/11/414906568.png", "type": "subscription" },
+            { "name": "NW INFO", "img": "https://www2.0zz0.com/2025/08/06/11/424903821.png", "type": "subscription" },
+            { "name": "NW NEWS", "img": "https://www2.0zz0.com/2025/08/06/11/796637418.png", "type": "subscription" },
+            { "name": "NW ECONOMIE", "img": "https://www2.0zz0.com/2025/08/06/11/700596177.png", "type": "subscription" },
+            { "name": "CANAL+ ELLES", "img": "https://www5.0zz0.com/2024/08/04/16/683859201.png", "type": "subscription" },
+            { "name": "CANAL+ MOTOGP", "img": "https://www5.0zz0.com/2024/08/04/16/486000238.png", "type": "subscription" },
+            { "name": "CANAL+ COMEDIE", "img": "https://www12.0zz0.com/2024/08/04/16/959586212.png", "type": "subscription" },
+            { "name": "CANAL+ FORMULA1", "img": "https://www12.0zz0.com/2024/08/04/16/948418337.png", "type": "subscription" },
+            { "name": "CANAL+ ACTION", "img": "https://www3.0zz0.com/2024/08/03/21/543282630.png", "type": "subscription" },
+            { "name": "CANAL+ POP", "img": "https://www10.0zz0.com/2024/08/03/21/704724425.png", "type": "subscription" },
+            { "name": "CANAL+ DOCS", "img": "https://www4.0zz0.com/2024/08/02/19/480616564.png", "type": "subscription" },
+            { "name": "CANAL+ CINEMA", "img": "https://www4.0zz0.com/2024/08/02/19/286861514.png", "type": "free", "handler": "cpluscine" },
+            { "name": "CANAL+ SERIES", "img": "https://www12.0zz0.com/2024/08/03/16/285854178.png", "type": "subscription" },
+            { "name": "CANAL+ FAMILY", "img": "https://www11.0zz0.com/2024/08/02/19/221024550.png", "type": "subscription" },
+            { "name": "CANAL+ FR", "img": "https://www4.0zz0.com/2024/08/02/19/401786475.png", "type": "subscription" },
+            { "name": "CANAL+ KIDS", "img": "https://www9.0zz0.com/2024/08/02/19/330026206.png", "type": "subscription" },
+            { "name": "CANAL+ 360", "img": "https://www9.0zz0.com/2024/08/02/19/626114773.png", "type": "subscription" },
+            { "name": "SS PREMIER LEAGUE", "img": "https://www2.0zz0.com/2025/08/15/13/905714362.png", "type": "subscription" },
+            { "name": "SS FOOTBALL", "img": "https://www2.0zz0.com/2025/08/15/13/152742633.png", "type": "subscription" },
+            { "name": "SS MOTORSPORT", "img": "https://www2.0zz0.com/2025/08/15/13/141511663.png", "type": "subscription" },
+            { "name": "SS GOLF", "img": "https://www2.0zz0.com/2025/08/15/13/682494829.png", "type": "subscription" },
+            { "name": "SS ACTION", "img": "https://www2.0zz0.com/2025/08/15/13/844049238.png", "type": "subscription" },
+            { "name": "SS BLITZ", "img": "https://www2.0zz0.com/2025/08/15/13/561539077.png", "type": "subscription" },
+            { "name": "SS WWE", "img": "https://www2.0zz0.com/2025/08/15/13/426336615.png", "type": "subscription" },
+            { "name": "SS AFRICA", "img": "https://www2.0zz0.com/2025/08/15/13/384864598.png", "type": "subscription" },
+            { "name": "SS MAXIMO 2", "img": "https://www2.0zz0.com/2025/08/15/13/350963076.png", "type": "subscription" },
+            { "name": "SS OTT 2", "img": "https://www2.0zz0.com/2025/08/15/13/238797531.png", "type": "subscription" },
+            { "name": "SS OTT 3", "img": "https://www2.0zz0.com/2025/08/15/13/846811838.png", "type": "subscription" },
+            { "name": "SS OTT 6", "img": "https://www2.0zz0.com/2025/08/15/13/479142142.png", "type": "subscription" },
+            { "name": "SS OTT 7", "img": "https://www2.0zz0.com/2025/08/15/13/160994433.png", "type": "subscription" },
+            { "name": "SS OTT 8", "img": "https://www2.0zz0.com/2025/08/15/13/815027801.png", "type": "subscription" },
+            { "name": "AB1", "img": "https://www12.0zz0.com/2024/08/02/19/789320552.png", "type": "subscription" },
+            { "name": "TRACE AFRICA", "img": "https://www9.0zz0.com/2024/08/02/14/300570449.png", "type": "free", "handler": "traceafr" },
+            { "name": "RMC SPORT 1", "img": "https://www11.0zz0.com/2024/08/03/16/305941677.png", "type": "subscription" },
+            { "name": "RMC SPORT 2", "img": "https://www11.0zz0.com/2024/08/03/16/221945841.png", "type": "subscription" },
+            { "name": "PASSION NOVELAS", "img": "https://www2.0zz0.com/2025/08/05/13/390688917.jpg", "type": "subscription" },
+            { "name": "BUSINESS24", "img": "https://www10.0zz0.com/2024/08/02/17/673607618.png", "type": "subscription" },
+            { "name": "BENIE TV", "img": "https://www3.0zz0.com/2024/08/02/17/512588113.png", "type": "subscription" },
+            { "name": "C3 BENIN", "img": "https://www12.0zz0.com/2024/08/03/23/327574881.png", "type": "subscription" },
+            { "name": "MEDIA 1", "img": "https://www12.0zz0.com/2024/08/03/23/662595454.png", "type": "subscription" },
+            { "name": "AFRICANEWS", "img": "https://www12.0zz0.com/2024/08/03/23/490994309.png", "type": "free", "handler": "africanw" },
+            { "name": "BBLACK!", "img": "https://www6.0zz0.com/2024/08/03/23/921541920.png", "type": "subscription" },
+            { "name": "AL BAYANE", "img": "https://www8.0zz0.com/2024/08/05/16/497310944.png", "type": "subscription" },
+            { "name": "MOURIDE TV", "img": "https://www8.0zz0.com/2024/08/05/15/232140954.png", "type": "subscription" },
+            { "name": "BFM TECH", "img": "https://www8.0zz0.com/2024/08/05/15/234659897.png", "type": "subscription" },
+            { "name": "TELE MAROC", "img": "https://www8.0zz0.com/2024/08/05/15/976364627.png", "type": "subscription" },
+            { "name": "DIRECT 7", "img": "https://www12.0zz0.com/2024/08/05/15/451472405.png", "type": "subscription" },
+            { "name": "NOVELAS CH", "img": "https://www12.0zz0.com/2024/08/05/15/118839256.png", "type": "subscription" },
+            { "name": "DBM", "img": "https://www12.0zz0.com/2024/08/05/15/296747703.png", "type": "subscription" },
+            { "name": "LNTV", "img": "https://www12.0zz0.com/2024/08/05/15/217467258.png", "type": "subscription" },
+            { "name": "BFM PARIS", "img": "https://www6.0zz0.com/2024/08/05/15/331132446.png", "type": "subscription" },
+            { "name": "BFM VAR", "img": "https://www12.0zz0.com/2024/08/05/15/476524380.png", "type": "subscription" },
+            { "name": "FRANCE 2", "img": "https://www12.0zz0.com/2024/08/03/23/833620670.png", "type": "subscription" },
+            { "name": "RMC DISCO", "img": "https://www6.0zz0.com/2024/08/05/14/142988663.png", "type": "subscription" },
+            { "name": "ALPHA OMEGA", "img": "https://www3.0zz0.com/2024/08/05/16/169556787.png", "type": "subscription" },
+            { "name": "2M", "img": "https://www6.0zz0.com/2024/08/05/15/997547554.png", "type": "subscription" },
+            { "name": "MADER TV", "img": "https://www8.0zz0.com/2024/08/05/15/680928644.png", "type": "subscription" },
+            { "name": "BFM TV", "img": "https://www8.0zz0.com/2024/08/05/15/591571849.png", "type": "subscription" },
+            { "name": "C DIRECT", "img": "https://www8.0zz0.com/2024/08/02/13/384973650.png", "type": "subscription" },
+            { "name": "CAILLOU", "img": "https://www3.0zz0.com/2024/08/05/15/244770831.png", "type": "subscription" },
+            { "name": "ETELE", "img": "https://www3.0zz0.com/2024/08/05/14/348101702.png", "type": "subscription" },
+            { "name": "CGTV FRANCE", "img": "https://www3.0zz0.com/2024/08/05/14/802893392.png", "type": "subscription" },
+            { "name": "M24", "img": "https://www6.0zz0.com/2024/08/05/14/702067846.png", "type": "subscription" },
+            { "name": "FRANCE 3", "img": "https://www4.0zz0.com/2024/08/02/19/784108665.png", "type": "subscription" },
+            { "name": "A+ BENIN", "img": "https://www3.0zz0.com/2024/08/05/16/216061406.png", "type": "subscription" },
+            { "name": "ZEECINEMA", "img": "https://www3.0zz0.com/2024/08/05/16/495240930.png", "type": "subscription" },
+            { "name": "BF1 TV", "img": "https://www12.0zz0.com/2024/08/02/11/106302678.png", "type": "subscription" },
+            { "name": "ZEE MAGIC", "img": "https://www11.0zz0.com/2024/08/02/19/401358724.png", "type": "subscription" },
+            { "name": "ACTION", "img": "https://www4.0zz0.com/2024/08/02/19/946225045.png", "type": "subscription" },
+            { "name": "OCS CHOC", "img": "https://www8.0zz0.com/2024/08/04/15/625086108.png", "type": "subscription" },
+            { "name": "OCS GEANTS", "img": "https://www8.0zz0.com/2024/08/04/15/259223734.png", "type": "subscription" },
+            { "name": "OCS MAX", "img": "https://www8.0zz0.com/2024/08/04/15/813772609.png", "type": "subscription" },
+            { "name": "OCS PULP", "img": "https://www9.0zz0.com/2024/08/04/15/647155103.png", "type": "subscription" },
+            { "name": "CINE+ PREMIER", "img": "https://www11.0zz0.com/2024/08/04/16/426250463.png", "type": "subscription" },
+            { "name": "CINE+ CLUB", "img": "https://www11.0zz0.com/2024/08/04/16/968724458.png", "type": "subscription" },
+            { "name": "CINE+", "img": "https://www5.0zz0.com/2024/08/04/16/647258077.png", "type": "subscription" },
+            { "name": "CINE+ EMOTION", "img": "https://www5.0zz0.com/2024/08/04/16/725955039.png", "type": "subscription" },
+            { "name": "LIFE TV", "img": "https://www3.0zz0.com/2024/08/02/17/898040584.png", "type": "subscription" },
+            { "name": "CHRIST LIVE", "img": "https://www8.0zz0.com/2024/08/05/15/503457039.png", "type": "subscription" },
+            { "name": "AFRICA 24", "img": "https://www9.0zz0.com/2024/08/03/21/767280668.png", "type": "subscription" },
+            { "name": "GUILLI", "img": "https://www12.0zz0.com/2024/08/05/15/362250090.png", "type": "subscription" },
+            { "name": "OMEGA TV", "img": "https://www8.0zz0.com/2024/08/02/17/856891724.png", "type": "subscription" },
+            { "name": "LERAL TV", "img": "https://www8.0zz0.com/2024/08/05/15/607622723.png", "type": "subscription" },
+            { "name": "WALF TV", "img": "https://www11.0zz0.com/2024/08/05/15/156663833.png", "type": "subscription" },
+            { "name": "CINAF", "img": "https://www11.0zz0.com/2024/08/05/15/552415747.png", "type": "subscription" },
+            { "name": "SKY NEWS", "img": "https://www6.0zz0.com/2024/08/05/14/411724419.png", "type": "subscription" },
+            { "name": "CRTV SPORTS", "img": "https://www6.0zz0.com/2024/08/03/23/996804151.png", "type": "subscription" },
+            { "name": "CRTV NEWS", "img": "https://www6.0zz0.com/2024/08/03/23/866055109.png", "type": "subscription" },
+            { "name": "CANAL 2", "img": "https://www11.0zz0.com/2024/08/02/12/251685056.png", "type": "subscription" },
+            { "name": "W9", "img": "https://www11.0zz0.com/2024/08/03/16/993720971.png", "type": "subscription" },
+            { "name": "NAT GEO", "img": "https://www11.0zz0.com/2024/08/03/16/769196937.png", "type": "subscription" },
+            { "name": "ANIMAUX", "img": "https://www11.0zz0.com/2024/08/03/16/476399976.png", "type": "subscription" },
+            { "name": "INVEST DISCO", "img": "https://www11.0zz0.com/2024/08/03/16/237328694.png", "type": "subscription" },
+            { "name": "TFX", "img": "https://www4.0zz0.com/2024/08/02/19/731635967.png", "type": "subscription" },
+            { "name": "HISTOIRE", "img": "https://www12.0zz0.com/2024/08/03/16/532612868.png", "type": "subscription" },
+            { "name": "TMC", "img": "https://www12.0zz0.com/2024/08/03/16/470499914.png", "type": "free", "handler": "rtl9" },
+            { "name": "RTL9", "img": "https://www6.0zz0.com/2024/08/03/17/252524174.png", "type": "subscription" },
+            { "name": "NAT GEO WILD", "img": "https://www3.0zz0.com/2024/08/03/17/301082467.png", "type": "subscription" },
+            { "name": "VOX AFRICA", "img": "https://www12.0zz0.com/2024/08/03/21/575996831.png", "type": "subscription" },
+            { "name": "M6", "img": "https://www4.0zz0.com/2024/08/02/19/632774996.png", "type": "subscription" },
+            { "name": "ARTE", "img": "https://www4.0zz0.com/2024/08/02/19/730659120.png", "type": "subscription" },
+            { "name": "FRANCE 5", "img": "https://www12.0zz0.com/2024/08/02/19/273842748.png", "type": "subscription" },
+            { "name": "CNEWS", "img": "https://www12.0zz0.com/2024/08/03/23/726180874.png", "type": "subscription" },
+            { "name": "I24", "img": "https://www12.0zz0.com/2024/08/03/23/306743068.png", "type": "subscription" },
+            { "name": "B-ONE", "img": "https://www3.0zz0.com/2024/08/03/23/615808054.png", "type": "subscription" },
+            { "name": "TIVI5", "img": "https://www3.0zz0.com/2024/08/03/23/543136644.png", "type": "subscription" },
+            { "name": "TRACE TERANGA", "img": "https://www3.0zz0.com/2024/08/03/23/357295681.png", "type": "subscription" },
+            { "name": "CANAL+ PL", "img": "https://www3.0zz0.com/2024/08/03/23/797004496.png", "type": "subscription" },
+            { "name": "TRACE TROPICAL", "img": "https://www8.0zz0.com/2024/08/03/23/543547411.png", "type": "subscription" },
+            { "name": "13EME RUE", "img": "https://www8.0zz0.com/2024/08/03/23/960654091.png", "type": "subscription" },
+            { "name": "ARWA24", "img": "https://www9.0zz0.com/2024/08/03/23/157251746.png", "type": "subscription" },
+            { "name": "CRIME DIST", "img": "https://www12.0zz0.com/2024/08/04/11/970595559.png", "type": "subscription" },
+            { "name": "MTV HITS", "img": "https://www12.0zz0.com/2024/08/04/11/814588157.png", "type": "subscription" },
+            { "name": "NATHAN TV", "img": "https://www12.0zz0.com/2024/08/04/11/612809235.png", "type": "subscription" },
+            { "name": "TRACE AFRIKOR", "img": "https://www12.0zz0.com/2024/08/04/11/579418691.png", "type": "subscription" },
+            { "name": "NICKELODEON JR", "img": "https://www12.0zz0.com/2024/08/04/11/924910335.png", "type": "subscription" },
+            { "name": "CUISINE.TV", "img": "https://www7.0zz0.com/2024/08/04/11/716283389.png", "type": "subscription" },
+            { "name": "E!", "img": "https://www7.0zz0.com/2024/08/04/11/455258145.png", "type": "subscription" },
+            { "name": "TREK", "img": "https://www11.0zz0.com/2024/08/04/11/368368807.png", "type": "subscription" },
+            { "name": "TRACE GOSPEL", "img": "https://www12.0zz0.com/2024/08/04/11/542272144.png", "type": "subscription" },
+            { "name": "DSTV", "img": "https://www6.0zz0.com/2024/08/02/13/551934770.png", "type": "subscription" },
+            { "name": "SEN TV", "img": "https://www3.0zz0.com/2024/08/02/13/311097832.png", "type": "subscription" },
+            { "name": "TFM", "img": "https://www3.0zz0.com/2024/08/02/13/942658676.png", "type": "subscription" },
+            { "name": "SUNU YEUF", "img": "https://www8.0zz0.com/2024/08/02/13/785865116.png", "type": "subscription" },
+            { "name": "3TV", "img": "https://www12.0zz0.com/2024/08/02/17/597677958.png", "type": "subscription" },
+            { "name": "SAVANE TV", "img": "https://www12.0zz0.com/2024/08/02/17/279635078.png", "type": "subscription" },
+            { "name": "CVK", "img": "https://www10.0zz0.com/2024/08/02/17/453115313.png", "type": "subscription" },
+            { "name": "CANAL3", "img": "https://www10.0zz0.com/2024/08/02/17/717904421.png", "type": "subscription" },
+            { "name": "TVZ AFRICA", "img": "https://www10.0zz0.com/2024/08/02/17/966120198.png", "type": "subscription" },
+            { "name": "IMPACT TV", "img": "https://www12.0zz0.com/2024/08/02/17/556324312.png", "type": "subscription" },
+            { "name": "LCA", "img": "https://www12.0zz0.com/2024/08/02/17/522564291.png", "type": "subscription" },
+            { "name": "GO AFRICA", "img": "https://www3.0zz0.com/2024/08/02/17/387005080.png", "type": "subscription" },
+            { "name": "GABON CULT", "img": "https://www3.0zz0.com/2024/08/02/17/510326615.png", "type": "subscription" },
+            { "name": "7INFO", "img": "https://www3.0zz0.com/2024/08/02/17/763768188.png", "type": "subscription" },
+            { "name": "GABON 1ERE", "img": "https://www3.0zz0.com/2024/08/02/17/819594372.png", "type": "subscription" },
+            { "name": "PIWI+", "img": "https://www3.0zz0.com/2024/08/04/11/109156741.png", "type": "subscription" },
+            { "name": "DISNEY JR", "img": "https://www3.0zz0.com/2024/08/04/11/493516697.png", "type": "subscription" },
+            { "name": "RTNC", "img": "https://www7.0zz0.com/2024/08/04/11/104445686.png", "type": "subscription" },
+            { "name": "TIJI", "img": "https://www7.0zz0.com/2024/08/04/11/565727051.png", "type": "subscription" },
+            { "name": "MEZZO", "img": "https://www7.0zz0.com/2024/08/04/11/540441399.png", "type": "subscription" },
+            { "name": "NICKELODEON", "img": "https://www10.0zz0.com/2024/08/04/11/731396589.png", "type": "subscription" },
+            { "name": "SCIENCE&VIE", "img": "https://www10.0zz0.com/2024/08/04/11/793716263.png", "type": "subscription" },
+            { "name": "BBC WN", "img": "https://www10.0zz0.com/2024/08/04/11/782380871.png", "type": "subscription" },
+            { "name": "CSTAR", "img": "https://www11.0zz0.com/2024/08/04/11/641202747.png", "type": "subscription" },
+            { "name": "ANTENNE TV", "img": "https://www11.0zz0.com/2024/08/04/11/849275723.png", "type": "subscription" },
+            { "name": "LIBIDO", "img": "https://www12.0zz0.com/2024/08/04/11/925028759.png", "type": "subscription" },
+            { "name": "EMCI", "img": "https://www4.0zz0.com/2024/08/04/11/207590336.png", "type": "subscription" },
+            { "name": "AMAZON PRIME 1", "img": "https://www5.0zz0.com/2024/08/04/16/884545934.png", "type": "subscription" },
+            { "name": "AMAZON PRIME 2", "img": "https://www5.0zz0.com/2024/08/04/16/884545934.png", "type": "subscription" },
+            { "name": "AMAZON PRIME 3", "img": "https://www5.0zz0.com/2024/08/04/16/884545934.png", "type": "subscription" },
+            { "name": "AMAZON PRIME 4", "img": "https://www5.0zz0.com/2024/08/04/16/884545934.png", "type": "subscription" },
+            { "name": "AMAZON PRIME 5", "img": "https://www5.0zz0.com/2024/08/04/16/884545934.png", "type": "subscription" },
+            { "name": "AMAZON PRIME 6", "img": "https://www5.0zz0.com/2024/08/04/16/884545934.png", "type": "subscription" },
+            { "name": "AMAZON PRIME 7", "img": "https://www5.0zz0.com/2024/08/04/16/884545934.png", "type": "subscription" },
+            { "name": "AMAZON PRIME 8", "img": "https://www5.0zz0.com/2024/08/04/16/884545934.png", "type": "subscription" },
+            { "name": "AMAZON PRIME 9", "img": "https://www5.0zz0.com/2024/08/04/16/884545934.png", "type": "subscription" },
+            { "name": "AMAZON PRIME 10", "img": "https://www5.0zz0.com/2024/08/04/16/884545934.png", "type": "subscription" },
+            { "name": "SKY SPORT 1", "img": "https://www3.0zz0.com/2024/08/04/16/116137231.png", "type": "subscription" },
+            { "name": "SKY SPORT 2", "img": "https://www3.0zz0.com/2024/08/04/16/116137231.png", "type": "subscription" },
+            { "name": "SKY SPORT 3", "img": "https://www3.0zz0.com/2024/08/04/16/116137231.png", "type": "subscription" },
+            { "name": "SKY SPORT 4", "img": "https://www3.0zz0.com/2024/08/04/16/116137231.png", "type": "subscription" },
+            { "name": "SKY SPORT 5", "img": "https://www3.0zz0.com/2024/08/04/16/116137231.png", "type": "subscription" },
+            { "name": "SKY SPORT 6", "img": "https://www3.0zz0.com/2024/08/04/16/116137231.png", "type": "subscription" },
+            { "name": "SKY SPORT 7", "img": "https://www3.0zz0.com/2024/08/04/16/116137231.png", "type": "subscription" },
+            { "name": "SKY SPORT 8", "img": "https://www3.0zz0.com/2024/08/04/16/116137231.png", "type": "subscription" },
+            { "name": "SKY SPORT 9", "img": "https://www3.0zz0.com/2024/08/04/16/116137231.png", "type": "subscription" },
+            { "name": "SKY SPORT 10", "img": "https://www3.0zz0.com/2024/08/04/16/116137231.png", "type": "subscription" },
+            { "name": "NETFLIX 1", "img": "https://www3.0zz0.com/2024/08/04/16/161723930.png", "type": "subscription" },
+            { "name": "NETFLIX 2", "img": "https://www3.0zz0.com/2024/08/04/16/161723930.png", "type": "subscription" },
+            { "name": "NETFLIX 3", "img": "https://www3.0zz0.com/2024/08/04/16/161723930.png", "type": "subscription" },
+            { "name": "NETFLIX 4", "img": "https://www3.0zz0.com/2024/08/04/16/161723930.png", "type": "subscription" },
+            { "name": "NETFLIX 5", "img": "https://www3.0zz0.com/2024/08/04/16/161723930.png", "type": "subscription" },
+            { "name": "NETFLIX 6", "img": "https://www3.0zz0.com/2024/08/04/16/161723930.png", "type": "subscription" },
+            { "name": "NETFLIX 7", "img": "https://www3.0zz0.com/2024/08/04/16/161723930.png", "type": "subscription" },
+            { "name": "NETFLIX 8", "img": "https://www3.0zz0.com/2024/08/04/16/161723930.png", "type": "subscription" },
+            { "name": "NETFLIX 9", "img": "https://www3.0zz0.com/2024/08/04/16/161723930.png", "type": "subscription" },
+            { "name": "NETFLIX 10", "img": "https://www3.0zz0.com/2024/08/04/16/161723930.png", "type": "subscription" },
+            { "name": "RMC SPORT 1", "img": "https://www2.0zz0.com/2025/07/20/09/284194548.png", "type": "subscription" },
+            { "name": "RMC SPORT 2", "img": "https://www2.0zz0.com/2025/07/20/09/284194548.png", "type": "subscription" },
+            { "name": "RMC SPORT 3", "img": "https://www2.0zz0.com/2025/07/20/09/284194548.png", "type": "subscription" },
+            { "name": "RMC SPORT 4", "img": "https://www2.0zz0.com/2025/07/20/09/284194548.png", "type": "subscription" },
+            { "name": "RMC SPORT 5", "img": "https://www2.0zz0.com/2025/07/20/09/284194548.png", "type": "subscription" },
+            { "name": "RMC SPORT 6", "img": "https://www2.0zz0.com/2025/07/20/09/284194548.png", "type": "subscription" },
+            { "name": "RMC SPORT 7", "img": "https://www2.0zz0.com/2025/07/20/09/284194548.png", "type": "subscription" },
+            { "name": "RMC SPORT 8", "img": "https://www2.0zz0.com/2025/07/20/09/284194548.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 1", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 2", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 3", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 4", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 5", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 6", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 7", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 8", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 9", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 10", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 11", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 12", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 13", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 14", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 15", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 16", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 17", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 18", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "CANAL+ LIVE 19", "img": "https://www2.0zz0.com/2025/07/20/08/349254527.png", "type": "subscription" },
+            { "name": "DAZN 1", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "subscription" },
+            { "name": "DAZN 2", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "subscription" },
+            { "name": "DAZN 3", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "subscription" },
+            { "name": "DAZN 4", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "subscription" },
+            { "name": "DAZN 5", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "subscription" },
+            { "name": "DAZN 6", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "subscription" },
+            { "name": "DAZN 7", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "subscription" },
+            { "name": "DAZN 8", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "subscription" },
+            { "name": "DAZN 9", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "subscription" },
+            { "name": "DAZN 10", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "subscription" },
+            { "name": "ADULT TV", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 1", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 2", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 3", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 4", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 5", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 6", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 7", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 8", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 9", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 10", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 11", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 12", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 13", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 14", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "ADULT TV 15", "img": "https://www5.0zz0.com/2024/08/04/16/239998957.png", "type": "subscription" },
+            { "name": "DORCEL TV", "img": "https://www2.0zz0.com/2025/07/23/16/564258556.png", "type": "subscription" },
+            { "name": "DORCEL AFRICA", "img": "https://www2.0zz0.com/2025/07/23/16/921996585.png", "type": "subscription" }
+        ];
+
+        // Charger les chaînes dans le DOM
+        function loadChannels(filter = '') {
+            const container = document.getElementById('buttons-list');
+            container.innerHTML = '';
+            
+            const filteredChannels = filter ? 
+                channels.filter(ch => ch.name.toLowerCase().includes(filter.toLowerCase())) : 
+                channels;
+            
+            if (filteredChannels.length === 0) {
+                container.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:white;">Aucune chaîne trouvée</p>';
+                return;
+            }
+            
+            filteredChannels.forEach(channel => {
+                const button = document.createElement('button');
+                button.className = 'channel-button';
+                button.innerHTML = `
+                    ${channel.type === 'free' ? '<span class="free-badge">Gratuit</span>' : '<span class="sub-badge">PREMIUM</span>'}
+                    <img src="${channel.img}" alt="${channel.name}" loading="lazy">
+                    <h2>${channel.name}</h2>
+                `;
+                
+                button.onclick = channel.type === 'free' ? 
+                    () => window.open(`go:${channel.handler}`) : 
+                    () => showPremiumModal();
+                
+                container.appendChild(button);
+            });
+        }
+
+        // Fonction de recherche
+        function searchChannels() {
+            const searchTerm = document.getElementById('search-input').value.trim();
+            loadChannels(searchTerm);
+        }
+
+        // Mode sombre/clair
+        function toggleDarkMode() {
+            document.body.classList.toggle('light-mode');
+            const icon = document.querySelector('#toggle-dark-mode i');
+            if (document.body.classList.contains('light-mode')) {
+                icon.classList.replace('fa-moon', 'fa-sun');
+            } else {
+                icon.classList.replace('fa-sun', 'fa-moon');
+            }
+        }
+
+        // Initialisation au chargement de la page
+        window.addEventListener('load', function() {
+            showAd();
+            createParticles();
+            
+            if (sessionStorage.getItem('channelsCached')) {
+                loadChannels();
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                }, 500);
+                return;
+            }
+            
+            setTimeout(() => {
+                loadChannels();
+                document.getElementById('loader').style.opacity = '0';
+                setTimeout(() => {
+                    document.getElementById('loader').style.display = 'none';
+                    sessionStorage.setItem('channelsCached', 'true');
+                }, 500);
+            }, 2000);
+
+            document.getElementById('toggle-dark-mode').addEventListener('click', toggleDarkMode);
+        });
+
+        // Gestionnaire d'événement pour la recherche lors de la touche Entrée
+        document.getElementById('search-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') searchChannels();
+        });
+    </script>
+</body>
+</html>
