@@ -883,13 +883,7 @@
 
 
             <div class="modal-buttons">
-<button class="modal-btn secondary" onclick="contactWhatsApp()">
-                    <i class="fab fa-whatsapp"></i>
-                    <div>
-                        <div>WhatsApp</div>
-                        <small>Support personnalisé</small>
-                    </div>
-                </button>
+
                 <button class="modal-btn primary" onclick="payOnline()">
                     <i class="fas fa-credit-card"></i>
                     <div>
@@ -1012,7 +1006,7 @@
 
         // Fonction pour visiter le site du sponsor
         function visitSponsor() {
-            window.open('https://wa.me/22670959953?text=Bonjour%2C%20je%20souhaite%20m%E2%80%99abonner%20%C3%A0%20l%E2%80%99application%20Africa%20Box%20et%20avoir%20plus%20d%E2%80%99informations%20sur%20les%20offres', '_blank');
+            window.open('https://tv.africaboxtv.live/tarifs.html', '_blank');
             closeAd();
         }
 
@@ -1051,12 +1045,12 @@
         }
 
         function payOnline() {
-            window.open('/tarifs.html', '_blank');
+            window.open('https://tv.africaboxtv.live/tarifs.html', '_blank');
             closeSubscriptionModal();
         }
 
         function contactWhatsApp() {
-            const message = "Bonjour, je souhaite m'abonner à l'application Africa Box et avoir plus d'informations sur les offres disponibles.";
+            const message = "Bonjour, je souhaite m'abonner à l'application Africa Box. Puis-je avoir plus d'informations sur les tarifs disponibles.";
             const phoneNumber = "22670959953";
             window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`, '_blank');
             closeSubscriptionModal();
@@ -1151,18 +1145,18 @@
 
         // Stockage des chaînes (version nettoyée)
         const channels = [
-            { "name": "RTB", "img": "https://www7.0zz0.com/2024/08/02/11/333373841.png", "type": "free", "handler": "rtb" },
-            { "name": "RTS 1", "img": "https://www12.0zz0.com/2024/08/05/15/299958314.png", "type": "free", "handler": "rts1" },
-            { "name": "RTN", "img": "https://www3.0zz0.com/2024/08/03/23/992357632.png", "type": "free", "handler": "rtn" },
-            { "name": "ORTM 1", "img": "https://www8.0zz0.com/2024/08/02/11/529794985.png", "type": "free", "handler": "ortm1" },
-            { "name": "INFOSPORT+", "img": "https://www9.0zz0.com/2024/08/02/19/664236517.png", "type": "free", "handler": "infosport" },
-            { "name": "CANAL+ SPORT", "img": "https://www11.0zz0.com/2024/08/02/19/428153634.png", "type": "free", "handler": "cplussport" },
+            { "name": "RTB", "img": "https://www7.0zz0.com/2024/08/02/11/333373841.png", "type": "subscription" },
+            { "name": "RTS 1", "img": "https://www12.0zz0.com/2024/08/05/15/299958314.png", "type": "subscription" },
+            { "name": "RTN", "img": "https://www3.0zz0.com/2024/08/03/23/992357632.png", "type": "subscription" },
+            { "name": "ORTM 1", "img": "https://www8.0zz0.com/2024/08/02/11/529794985.png", "type": "subscription" },
+            { "name": "INFOSPORT+", "img": "https://www9.0zz0.com/2024/08/02/19/664236517.png", "type": "subscription" },
+            { "name": "CANAL+ SPORT", "img": "https://www11.0zz0.com/2024/08/02/19/428153634.png", "type": "subscription" },
             { "name": "AFRO MAGIC", "img": "https://www2.0zz0.com/2025/08/05/14/374274234.png", "type": "subscription" },
-            { "name": "TF1", "img": "https://www4.0zz0.com/2024/08/02/19/658699334.png", "type": "free", "handler": "tf1" },
+            { "name": "TF1", "img": "https://www4.0zz0.com/2024/08/02/19/658699334.png", "type": "subscription" },
             { "name": "TF1 SERIES", "img": "https://www4.0zz0.com/2024/08/02/19/249284201.png", "type": "subscription" },
             { "name": "SYFY", "img": "https://www4.0zz0.com/2024/08/03/21/782764156.png", "type": "subscription" },
-            { "name": "ORTM 2", "img": "https://www12.0zz0.com/2024/08/02/11/394695009.png", "type": "free", "handler": "ortm2" },
-            { "name": "TVT", "img": "https://www12.0zz0.com/2024/08/03/23/511263635.png", "type": "free", "handler": "aplus" },
+            { "name": "ORTM 2", "img": "https://www12.0zz0.com/2024/08/02/11/394695009.png", "type": "subscription" },
+            { "name": "TVT", "img": "https://www12.0zz0.com/2024/08/03/23/511263635.png", "type": "subscription" },
             { "name": "A+", "img": "https://www7.0zz0.com/2024/08/02/19/342432574.png", "type": "subscription" },
             { "name": "A+ IVOIRE", "img": "https://www3.0zz0.com/2024/08/02/17/771903257.png", "type": "subscription" },
             { "name": "RTI 1", "img": "https://www10.0zz0.com/2024/08/02/11/153609319.png", "type": "subscription" },
@@ -1175,8 +1169,8 @@
             { "name": "CANAL+ SPORT2", "img": "https://www9.0zz0.com/2024/08/02/19/448373422.png", "type": "subscription" },
             { "name": "CANAL+ SPORT 3", "img": "https://www12.0zz0.com/2024/08/02/19/710696525.png", "type": "subscription" },
             { "name": "CANAL+ SPORT 4", "img": "https://www9.0zz0.com/2024/08/02/19/765468348.png", "type": "subscription" },
-            { "name": "CANAL+ SPORT 5", "img": "https://www4.0zz0.com/2024/08/02/19/962099565.png", "type": "free", "handler": "canalsp5" },
-            { "name": "SS GRANSTAND", "img": "https://www2.0zz0.com/2025/08/15/13/680193869.png", "type": "free", "handler": "ssgs" },
+            { "name": "CANAL+ SPORT 5", "img": "https://www4.0zz0.com/2024/08/02/19/962099565.png", "type": "subscription" },
+            { "name": "SS GRANSTAND", "img": "https://www2.0zz0.com/2025/08/15/13/680193869.png", "type": "subscription" },
             { "name": "SUPERSPORT 1", "img": "https://www2.0zz0.com/2025/08/15/13/276074156.png", "type": "subscription" },
             { "name": "SUPERSPORT 2", "img": "https://www2.0zz0.com/2025/08/15/13/276074156.png", "type": "subscription" },
             { "name": "SUPERSPORT 3", "img": "https://www2.0zz0.com/2025/08/15/13/276074156.png", "type": "subscription" },
@@ -1189,11 +1183,11 @@
             { "name": "NW SPORT 5", "img": "https://www2.0zz0.com/2025/08/06/11/499356631.png", "type": "subscription" },
             { "name": "NW SPORT 6", "img": "https://www2.0zz0.com/2025/08/06/11/299922740.png", "type": "subscription" },
             { "name": "NW SPORT 7", "img": "https://www2.0zz0.com/2025/08/06/11/226334933.png", "type": "subscription" },
-            { "name": "EUROSPORT 1", "img": "https://www4.0zz0.com/2024/08/02/19/970018965.png", "type": "free", "handler": "euro1" },
+            { "name": "EUROSPORT 1", "img": "https://www4.0zz0.com/2024/08/02/19/970018965.png", "type": "subscription" },
             { "name": "EUROSPORT 2", "img": "https://www4.0zz0.com/2024/08/02/19/632959211.png", "type": "subscription" },
             { "name": "beIN SPORT 1", "img": "https://www8.0zz0.com/2024/08/02/20/534618143.png", "type": "subscription" },
             { "name": "beIN SPORTS 2", "img": "https://www4.0zz0.com/2024/08/02/19/584244375.png", "type": "subscription" },
-            { "name": "beIN SPORT 3", "img": "https://www12.0zz0.com/2024/08/02/20/191541997.png", "type": "free", "handler": "bein3" },
+            { "name": "beIN SPORT 3", "img": "https://www12.0zz0.com/2024/08/02/20/191541997.png", "type": "subscription" },
             { "name": "beIN MAX 4", "img": "https://www7.0zz0.com/2024/08/04/16/470754045.png", "type": "subscription" },
             { "name": "beIN MAX 5", "img": "https://www10.0zz0.com/2024/08/04/16/203037067.png", "type": "subscription" },
             { "name": "beIN MAX 6", "img": "https://www5.0zz0.com/2024/08/04/16/923922490.png", "type": "subscription" },
@@ -1201,7 +1195,7 @@
             { "name": "beIN MAX 8", "img": "https://www10.0zz0.com/2024/08/04/16/490652275.png", "type": "subscription" },
             { "name": "beIN MAX 9", "img": "https://www10.0zz0.com/2024/08/04/16/484553568.png", "type": "subscription" },
             { "name": "beIN MAX 10", "img": "https://www11.0zz0.com/2024/08/04/16/564145867.png", "type": "subscription" },
-            { "name": "DAZN", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "free", "handler": "dazn" },
+            { "name": "DAZN", "img": "https://www2.0zz0.com/2025/07/20/08/659503761.png", "type": "subscription" },
             { "name": "BF INFO", "img": "https://www12.0zz0.com/2024/08/02/17/918060545.png", "type": "subscription" },
             { "name": "NW CINEMA", "img": "https://www2.0zz0.com/2025/08/06/11/466225499.png", "type": "subscription" },
             { "name": "NW SERIES", "img": "https://www2.0zz0.com/2025/08/06/11/367401199.png", "type": "subscription" },
@@ -1218,7 +1212,7 @@
             { "name": "CANAL+ ACTION", "img": "https://www3.0zz0.com/2024/08/03/21/543282630.png", "type": "subscription" },
             { "name": "CANAL+ POP", "img": "https://www10.0zz0.com/2024/08/03/21/704724425.png", "type": "subscription" },
             { "name": "CANAL+ DOCS", "img": "https://www4.0zz0.com/2024/08/02/19/480616564.png", "type": "subscription" },
-            { "name": "CANAL+ CINEMA", "img": "https://www4.0zz0.com/2024/08/02/19/286861514.png", "type": "free", "handler": "cpluscine" },
+            { "name": "CANAL+ CINEMA", "img": "https://www4.0zz0.com/2024/08/02/19/286861514.png", "type": "subscription" },
             { "name": "CANAL+ SERIES", "img": "https://www12.0zz0.com/2024/08/03/16/285854178.png", "type": "subscription" },
             { "name": "CANAL+ FAMILY", "img": "https://www11.0zz0.com/2024/08/02/19/221024550.png", "type": "subscription" },
             { "name": "CANAL+ FR", "img": "https://www4.0zz0.com/2024/08/02/19/401786475.png", "type": "subscription" },
@@ -1239,7 +1233,7 @@
             { "name": "SS OTT 7", "img": "https://www2.0zz0.com/2025/08/15/13/160994433.png", "type": "subscription" },
             { "name": "SS OTT 8", "img": "https://www2.0zz0.com/2025/08/15/13/815027801.png", "type": "subscription" },
             { "name": "AB1", "img": "https://www12.0zz0.com/2024/08/02/19/789320552.png", "type": "subscription" },
-            { "name": "TRACE AFRICA", "img": "https://www9.0zz0.com/2024/08/02/14/300570449.png", "type": "free", "handler": "traceafr" },
+            { "name": "TRACE AFRICA", "img": "https://www9.0zz0.com/2024/08/02/14/300570449.png", "type": "subscription" },
             { "name": "RMC SPORT 1", "img": "https://www11.0zz0.com/2024/08/03/16/305941677.png", "type": "subscription" },
             { "name": "RMC SPORT 2", "img": "https://www11.0zz0.com/2024/08/03/16/221945841.png", "type": "subscription" },
             { "name": "PASSION NOVELAS", "img": "https://www2.0zz0.com/2025/08/05/13/390688917.jpg", "type": "subscription" },
