@@ -244,35 +244,99 @@
             margin-right: 10px;
         }
 
-        .whatsapp-float {
+        /* Popup Publicitaire */
+        .ad-popup {
             position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 60px;
-            height: 60px;
-            background: #25D366;
-            color: white;
-            border-radius: 50%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
             display: flex;
-            align-items: center;
             justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .ad-popup.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .ad-content {
+            background: linear-gradient(135deg, var(--dark-bg), #2a2a4e);
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            border: 3px solid var(--premium-gold);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.7);
+            transform: scale(0.9);
+            transition: transform 0.5s ease;
+        }
+
+        .ad-popup.active .ad-content {
+            transform: scale(1);
+        }
+
+        .close-ad {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--premium-gold);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-ad:hover {
+            transform: rotate(90deg);
+        }
+
+        .ad-icon {
+            font-size: 4rem;
+            color: var(--premium-gold);
+            margin-bottom: 20px;
+        }
+
+        .ad-title {
             font-size: 1.8rem;
-            box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
-            z-index: 1000;
-            transition: all 0.3s ease;
+            color: var(--premium-gold);
+            margin-bottom: 15px;
+        }
+
+        .ad-description {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .ad-button {
+            display: inline-block;
+            padding: 18px 40px;
+            background: linear-gradient(135deg, var(--premium-gold), #ff9500);
+            color: #000;
             text-decoration: none;
-            animation: pulse 2s infinite;
+            border-radius: var(--button-radius);
+            font-size: 1.2rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            border: none;
+            cursor: pointer;
         }
 
-        .whatsapp-float:hover {
-            transform: scale(1.1);
-            animation: none;
-        }
-
-        @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        .ad-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(255, 215, 0, 0.4);
         }
 
         /* Responsive */
@@ -296,12 +360,17 @@
                 font-size: 1.8rem;
             }
 
-            .whatsapp-float {
-                width: 55px;
-                height: 55px;
-                font-size: 1.6rem;
-                bottom: 20px;
-                right: 20px;
+            .ad-content {
+                padding: 30px 20px;
+                width: 95%;
+            }
+
+            .ad-title {
+                font-size: 1.5rem;
+            }
+
+            .ad-icon {
+                font-size: 3rem;
             }
         }
 
@@ -321,10 +390,30 @@
     </style>
 </head>
 <body>
-    <div class="subscription-container">
-      
-        <p class="section-subtitle">Débloquez l'accès à 1500+ chaînes et profitez du meilleur du streaming</p>
+    <!-- Popup Publicitaire -->
+    <div class="ad-popup active" id="adPopup">
+        <div class="ad-content">
+            <button class="close-ad" id="closeAd">&times;</button>
+            <div class="ad-icon">
+                <i class="fas fa-gift"></i>
+            </div>
+            <h2 class="ad-title">OFFRE SPÉCIALE !</h2>
+            <p class="ad-description">
+                🎉 <strong>SENEGAL VS MAROC !</strong> 🎉<br>
+                Abonnez-vous aujourd'hui et bénéficiez de <strong>50% de réduction</strong> <br>
+                Offre valable uniquement aujourd'hui.
+            </p>
+            <a href="https://paylink.ligdicash.com/paielinktv" class="ad-button" target="_blank" id="adRedirect">
+                <i class="fas fa-bolt"></i> PROFITER DE L'OFFRE
+            </a>
+            <p style="margin-top: 15px; font-size: 0.9rem; opacity: 0.7;">
+                Cliquez sur "PROFITER DE L'OFFRE" 
+            </p>
+        </div>
+    </div>
 
+    <div class="subscription-container">
+        
         <div class="pricing-grid">
             <!-- Offre 1 Mois -->
             <div class="pricing-card">
@@ -397,16 +486,6 @@
             </div>
         </div>
 
-        <div class="payment-methods">
-            <h3><i class="fas fa-comments"></i> Besoin d'aide ?</h3>
-            <p style="margin-bottom: 20px; opacity: 0.9;">Notre équipe est disponible pour vous accompagner</p>
-            <div class="payment-buttons">
-                <a href="https://wa.me/22601252138?text=Bonjour%2C%20je%20souhaite%20m%E2%80%99abonner%20%C3%A0%20l%E2%80%99application%20Africa%20Box" class="payment-btn success" target="_blank">
-                    <i class="fab fa-whatsapp"></i> Contacter le support
-                </a>
-            </div>
-        </div>
-
         <div class="guarantee">
             <p>
                 <i class="fas fa-shield-alt"></i>
@@ -414,11 +493,6 @@
             </p>
         </div>
     </div>
-
-    <!-- Bouton WhatsApp flottant -->
-    <a href="https://wa.me/22601252138?text=Bonjour%2C%20je%20souhaite%20m%E2%80%99abonner%20%C3%A0%20l%E2%80%99application%20Africa%20Box" class="whatsapp-float" target="_blank" aria-label="Contactez-nous sur WhatsApp">
-        <i class="fab fa-whatsapp"></i>
-    </a>
 
     <script>
         // Animation au chargement
@@ -450,19 +524,56 @@
                     }, 1500);
                 });
             });
-        });
 
-        // Animation du bouton WhatsApp au survol
-        const whatsappBtn = document.querySelector('.whatsapp-float');
-        if (whatsappBtn) {
-            whatsappBtn.addEventListener('mouseenter', function() {
-                this.style.transform = 'scale(1.1) rotate(5deg)';
+            // Gestion de la popup publicitaire
+            const adPopup = document.getElementById('adPopup');
+            const closeAd = document.getElementById('closeAd');
+            const adRedirect = document.getElementById('adRedirect');
+
+            // Fermer la popup
+            closeAd.addEventListener('click', function() {
+                adPopup.classList.remove('active');
+                setTimeout(() => {
+                    adPopup.style.display = 'none';
+                }, 500);
             });
-            
-            whatsappBtn.addEventListener('mouseleave', function() {
-                this.style.transform = 'scale(1) rotate(0deg)';
+
+            // Redirection via le bouton publicitaire
+            adRedirect.addEventListener('click', function(e) {
+                e.preventDefault();
+                const originalHTML = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Redirection...';
+                this.style.opacity = '0.8';
+                
+                setTimeout(() => {
+                    window.open(this.href, '_blank');
+                    adPopup.classList.remove('active');
+                    setTimeout(() => {
+                        adPopup.style.display = 'none';
+                    }, 500);
+                }, 1000);
             });
-        }
+
+            // Fermer la popup en cliquant à l'extérieur
+            adPopup.addEventListener('click', function(e) {
+                if (e.target === adPopup) {
+                    adPopup.classList.remove('active');
+                    setTimeout(() => {
+                        adPopup.style.display = 'none';
+                    }, 500);
+                }
+            });
+
+            // Optionnel : Fermer automatiquement après 30 secondes
+            setTimeout(() => {
+                if (adPopup.classList.contains('active')) {
+                    adPopup.classList.remove('active');
+                    setTimeout(() => {
+                        adPopup.style.display = 'none';
+                    }, 500);
+                }
+            }, 30000);
+        });
     </script>
 </body>
 </html>
